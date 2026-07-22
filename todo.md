@@ -1,10 +1,10 @@
 # AI Red Team Lab — Build TODO
 
 ## Phase 1 · Foundation
-- [ ] `pyproject.toml` — add description, fix author, add deps (`requests`, `beautifulsoup4`, `rich`, `click`) and dev deps (`pytest`, `pytest-cov`, `responses`, `flask`)
-- [ ] `src/ai_red_team_lab/__init__.py`
-- [ ] `tests/__init__.py`
-- [ ] `tests/conftest.py` — mock HTTP server fixture + temp config file fixture
+- [x] `pyproject.toml` — add description, fix author, add deps (`requests`, `beautifulsoup4`, `rich`, `click`) and dev deps (`pytest`, `pytest-cov`, `responses`, `flask`)
+- [x] `src/ai_red_team_lab/__init__.py`
+- [x] `tests/__init__.py`
+- [x] `tests/conftest.py` — mock HTTP server fixture + temp config file fixture
 
 ## Phase 2 · Observation Library
 - [ ] `src/ai_red_team_lab/http_requester.py` — `fetch()` → status, headers, body excerpt, redirect chain

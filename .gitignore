@@ -1,0 +1,53 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+build/
+dist/
+
+# --- Virtual environments ---
+.venv/
+venv/
+env/
+ENV/
+
+# --- Testing / coverage ---
+.pytest_cache/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+.tox/
+.nox/
+.cache/
+
+# --- Type checkers / linters ---
+.mypy_cache/
+.dmypy.json
+.ruff_cache/
+
+# --- Secrets / local env (lab targets intentionally hardcode secrets in
+#     tracked source; this only ignores machine-local override files) ---
+.env
+.env.*
+!.env.example
+
+# --- Editor / IDE ---
+.vscode/
+.idea/
+*.swp
+
+# --- Claude Code local (per-machine) ---
+.claude/settings.local.json
+
+# --- tokensave MCP local state (SQLite cache + WAL, machine-local) ---
+.tokensave/
+
+# --- OS cruft ---
+.DS_Store
+Thumbs.db
+
+# --- Logs ---
+*.log
