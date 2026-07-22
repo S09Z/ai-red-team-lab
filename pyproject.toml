@@ -1,15 +1,26 @@
 [project]
 name = "ai-red-team-lab"
 version = "0.1.0"
-description = ""
+description = "Read-only, evidence-driven AI red team lab: observation tooling and a deliberately vulnerable Flask target for authorized defensive training."
 authors = [
-    {name = "Your Name",email = "you@example.com"}
+    {name = "Red Team Lab Maintainer",email = "i.boonyarakthunya@gmail.com"}
 ]
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
-    "headroom (>=0.2.7,<0.3.0)"
+    "headroom (>=0.2.7,<0.3.0)",
+    "requests>=2.32",
+    "beautifulsoup4>=4.12",
+    "rich>=13.7",
+    "click>=8.1"
 ]
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = ">=8.0"
+pytest-cov = ">=5.0"
+responses = ">=0.25"
+flask = ">=3.0"
 
 
 [build-system]
