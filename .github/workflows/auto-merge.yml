@@ -1,0 +1,93 @@
+name: Scheduled Auto-Merge
+
+# Merges exactly one (the oldest mergeable) open PR per run, but only while the
+# current Bangkok date falls inside the AUTO_MERGE_RANGE window.
+#
+# AUTO_MERGE_RANGE is read from the GitHub Actions repository variable
+# (Settings -> Secrets and variables -> Actions -> Variables). Format:
+#   DDMMYYYY:DDMMYYYY   (start:end, inclusive)
+# The repo's local .env mirrors this value for humans but is gitignored and
+# never reaches the runner.
+
+on:
+  schedule:
+    # Cron is UTC. Asia/Bangkok is UTC+7, so 00:00 ICT ("12:00 AM" Bangkok)
+    # is 17:00 UTC of the previous calendar day.
+    - cron: '0 17 * * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  auto-merge-oldest:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      AUTO_MERGE_RANGE: ${{ vars.AUTO_MERGE_RANGE }}
+    steps:
+      - name: Guard - AUTO_MERGE_RANGE must be configured
+        run: |
+          if [ -z "${AUTO_MERGE_RANGE}" ]; then
+            echo "::error::Repository variable AUTO_MERGE_RANGE is not set."
+            exit 1
+          fi
+
+      - name: Check today is within AUTO_MERGE_RANGE (Asia/Bangkok)
+        id: window
+        run: |
+          set -euo pipefail
+          # Strip surrounding quotes and all spaces, e.g.  '01072026:30072026'
+          raw="${AUTO_MERGE_RANGE//[\'\" ]/}"
+          start_ddmmyyyy="${raw%%:*}"
+          end_ddmmyyyy="${raw##*:}"
+
+          if ! printf '%s' "$start_ddmmyyyy" | grep -qE '^[0-9]{8}$' \
+             || ! printf '%s' "$end_ddmmyyyy" | grep -qE '^[0-9]{8}$'; then
+            echo "::error::AUTO_MERGE_RANGE must be DDMMYYYY:DDMMYYYY, got '${AUTO_MERGE_RANGE}'."
+            exit 1
+          fi
+
+          # DDMMYYYY -> YYYYMMDD so integer comparison is chronological.
+          to_iso() { printf '%s%s%s' "${1:4:4}" "${1:2:2}" "${1:0:2}"; }
+          start_iso="$(to_iso "$start_ddmmyyyy")"
+          end_iso="$(to_iso "$end_ddmmyyyy")"
+          today_iso="$(TZ='Asia/Bangkok' date +%Y%m%d)"
+
+          echo "Window: ${start_iso}..${end_iso} | Today (Bangkok): ${today_iso}"
+          if [ "$today_iso" -ge "$start_iso" ] && [ "$today_iso" -le "$end_iso" ]; then
+            echo "active=true" >> "$GITHUB_OUTPUT"
+            echo "Inside window - proceeding."
+          else
+            echo "active=false" >> "$GITHUB_OUTPUT"
+            echo "Outside window - skipping."
+          fi
+
+      - name: Merge oldest mergeable open PR (squash)
+        if: steps.window.outputs.active == 'true'
+        run: |
+          set -euo pipefail
+          # Oldest non-draft open PR by creation date = the "1 older PR".
+          num="$(gh pr list --state open \
+                   --json number,createdAt,isDraft \
+                   --jq 'map(select(.isDraft==false)) | sort_by(.createdAt) | .[0].number // empty')"
+
+          if [ -z "${num}" ]; then
+            echo "No open non-draft PRs to merge."
+            exit 0
+          fi
+
+          state="$(gh pr view "$num" --json mergeStateStatus --jq '.mergeStateStatus')"
+          echo "Oldest open PR #${num} mergeStateStatus=${state}"
+
+          case "$state" in
+            CLEAN|HAS_HOOKS)
+              echo "PR #${num} is mergeable - squash merging."
+              gh pr merge "$num" --squash
+              ;;
+            *)
+              # BLOCKED / DIRTY / DRAFT / BEHIND / UNSTABLE / UNKNOWN -> do not merge.
+              echo "PR #${num} is not cleanly mergeable (state=${state}); skipping."
+              ;;
+          esac
