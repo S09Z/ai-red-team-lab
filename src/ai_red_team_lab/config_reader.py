@@ -87,7 +87,9 @@ def _scan_line(lineno: int, line: str) -> dict[str, Any] | None:
             recommendation = "Value is a reference; confirm the source is not itself committed."
         else:
             severity = "HIGH"
-            recommendation = "Remove the hardcoded secret; load it from a secret manager or env var."
+            recommendation = (
+                "Remove the hardcoded secret; load it from a secret manager or env var."
+            )
         return {
             "line": lineno,
             "category": "secret",
