@@ -37,9 +37,9 @@
 - [x] `docker-compose.yml` — flask-app service, port 5000, isolated bridge network, healthcheck
 
 ## Phase 6 · Templates
-- [ ] `templates/finding-card.md` — 8-field evidence card (CLAUDE.md §6)
-- [ ] `templates/full-report.md` — 12-section report skeleton (CLAUDE.md §8)
-- [ ] `templates/role-checklist.md` — self-verification checklist (CLAUDE.md §10)
+- [x] `templates/finding-card.md` — 8-field evidence card (CLAUDE.md §6)
+- [x] `templates/full-report.md` — 12-section report skeleton (CLAUDE.md §8)
+- [x] `templates/role-checklist.md` — self-verification checklist (CLAUDE.md §10)
 
 ## Phase 7 · CLI Tools
 - [ ] `tools/README.md`
