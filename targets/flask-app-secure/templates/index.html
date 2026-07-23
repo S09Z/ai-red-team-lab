@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Home — Red Team Lab (Hardened){% endblock %}
+{% block content %}
+<h1>Red Team Lab — Hardened Flask Target</h1>
+<p>The defensive counterpart of the vulnerable target. Run the same observation
+tools against both and compare the results.</p>
+<h2>Entry Points</h2>
+<ul>
+  <li><a href="/login">Login</a></li>
+  <li><a href="/search?q=">Search posts</a></li>
+  <li><a href="/dashboard">Dashboard</a> (requires login)</li>
+</ul>
+{% endblock %}
