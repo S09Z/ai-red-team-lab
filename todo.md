@@ -7,11 +7,11 @@
 - [x] `tests/conftest.py` — mock HTTP server fixture + temp config file fixture
 
 ## Phase 2 · Observation Library
-- [ ] `src/ai_red_team_lab/http_requester.py` — `fetch()` → status, headers, body excerpt, redirect chain
-- [ ] `src/ai_red_team_lab/port_enumerator.py` — `scan()` → open/closed/filtered via stdlib `socket` only
-- [ ] `src/ai_red_team_lab/js_harvester.py` — `harvest()` → extract scripts, scan for secrets/endpoints/comments
-- [ ] `src/ai_red_team_lab/header_inspector.py` — `inspect()` → audit 9 security headers, return score 0–9
-- [ ] `src/ai_red_team_lab/config_reader.py` — `read_config()` → static scan of compose/.env/yaml for secrets/debug flags
+- [x] `src/ai_red_team_lab/http_requester.py` — `fetch()` → status, headers, body excerpt, redirect chain
+- [x] `src/ai_red_team_lab/port_enumerator.py` — `scan()` → open/closed/filtered via stdlib `socket` only
+- [x] `src/ai_red_team_lab/js_harvester.py` — `harvest()` → extract scripts, scan for secrets/endpoints/comments
+- [x] `src/ai_red_team_lab/header_inspector.py` — `inspect()` → audit 9 security headers, return score 0–9
+- [x] `src/ai_red_team_lab/config_reader.py` — `read_config()` → static scan of compose/.env/yaml for secrets/debug flags
 
 ## Phase 3 · Tests
 - [ ] `tests/test_http_requester.py`
