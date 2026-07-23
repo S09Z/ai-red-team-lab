@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h1>Dashboard</h1>
+<h2>New Post</h2>
+<form method="post" action="/post/new">
+  <input name="title" placeholder="Title" style="width:300px"><br><br>
+  <textarea name="content" placeholder="Content (HTML allowed)" rows="4" cols="50"></textarea><br><br>
+  <button type="submit">Post</button>
+</form>
+<hr>
+<h2>All Posts</h2>
+{% for post in posts %}
+<div style="border:1px solid #ccc;margin:8px;padding:8px">
+  <h3><a href="/post/{{ post.id }}">{{ post.title }}</a></h3>
+  <small>by <a href="/profile/{{ post.user_id }}">{{ post.username }}</a></small>
+</div>
+{% endfor %}
+{% endblock %}

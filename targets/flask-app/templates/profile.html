@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Profile — {{ user.username }}{% endblock %}
+{% block content %}
+<h1>{{ user.username }}</h1>
+<p>Email: {{ user.email }}</p>
+<h2>Bio</h2>
+{# VULNERABLE: bio rendered as raw HTML → stored XSS. #}
+<div class="bio">{{ user.bio | safe }}</div>
+<hr>
+<h2>Update Bio</h2>
+{# VULNERABLE: no ownership check — any logged-in user can update any profile (IDOR). #}
+<form method="post" action="/profile/{{ user.id }}/update">
+  <textarea name="bio" rows="4" cols="50" placeholder="HTML allowed">{{ user.bio }}</textarea><br><br>
+  <button type="submit">Update</button>
+</form>
+{% endblock %}

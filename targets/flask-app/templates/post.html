@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}{{ post.title }}{% endblock %}
+{% block content %}
+<h1>{{ post.title }}</h1>
+{# VULNERABLE: content rendered as raw HTML → stored XSS execution point. #}
+<div class="content">{{ post.content | safe }}</div>
+<br>
+<a href="/dashboard">← Back</a>
+{% endblock %}
