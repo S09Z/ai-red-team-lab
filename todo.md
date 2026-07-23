@@ -34,7 +34,7 @@
 - [x] `targets/flask-app/Dockerfile`
 
 ## Phase 5 · Docker Compose
-- [ ] `docker-compose.yml` — flask-app service, port 5000, isolated bridge network, healthcheck
+- [x] `docker-compose.yml` — flask-app service, port 5000, isolated bridge network, healthcheck
 
 ## Phase 6 · Templates
 - [ ] `templates/finding-card.md` — 8-field evidence card (CLAUDE.md §6)

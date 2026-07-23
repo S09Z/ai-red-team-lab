@@ -1,0 +1,17 @@
+services:
+  flask-app:
+    build: ./targets/flask-app
+    ports:
+      - "5000:5000"
+    networks:
+      - lab-net
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5000/')"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+networks:
+  lab-net:
+    driver: bridge
