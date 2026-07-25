@@ -9,9 +9,10 @@ JavaScript Analyst); the target is not modified.
 
 from __future__ import annotations
 
+import ipaddress
 import re
 from typing import Any
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlparse
 
 import requests
 from bs4 import BeautifulSoup
@@ -63,6 +64,12 @@ def harvest(
         src = tag.get("src")
         if src:
             script_url = urljoin(url, src)
+            if not _is_safe_script_url(script_url):
+                result["scripts"].append(
+                    {"type": "external", "src": script_url, "chars": 0,
+                     "error": "blocked: private/loopback/link-local address"}
+                )
+                continue
             try:
                 text = requests.get(script_url, timeout=timeout).text
             except requests.RequestException as exc:
@@ -97,3 +104,17 @@ def harvest(
                 )
 
     return result
+
+
+def _is_safe_script_url(url: str) -> bool:
+    """Return False if url resolves to a loopback, link-local, or RFC 1918 IP literal.
+
+    Hostname-based URLs (non-IP) are allowed through; they cannot be checked
+    without DNS resolution (which would introduce a TOCTOU race).
+    """
+    host = urlparse(url).hostname or ""
+    try:
+        addr = ipaddress.ip_address(host)
+        return not (addr.is_loopback or addr.is_link_local or addr.is_private)
+    except ValueError:
+        return True  # not a raw IP literal — allow
