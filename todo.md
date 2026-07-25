@@ -14,11 +14,15 @@
 - [x] `src/ai_red_team_lab/config_reader.py` — `read_config()` → static scan of compose/.env/yaml for secrets/debug flags
 
 ## Phase 3 · Tests
-- [ ] `tests/test_http_requester.py`
-- [ ] `tests/test_port_enumerator.py`
-- [ ] `tests/test_js_harvester.py`
-- [ ] `tests/test_header_inspector.py`
-- [ ] `tests/test_config_reader.py`
+- [x] `tests/test_http_requester.py`
+- [x] `tests/test_port_enumerator.py`
+- [x] `tests/test_js_harvester.py`
+- [x] `tests/test_header_inspector.py`
+- [x] `tests/test_config_reader.py`
+
+## Phase 3b · Security Hardening (from /security-review findings)
+- [x] `src/ai_red_team_lab/js_harvester.py` — block SSRF: reject script `src` URLs that resolve to loopback / link-local / RFC 1918 IP literals before fetching
+- [x] `tests/test_js_harvester.py` — add tests: link-local (169.254.x.x) blocked, loopback (127.x.x.x) blocked, normal external host still allowed
 
 ## Phase 4 · Flask Target
 - [ ] `targets/flask-app/config.py` — hardcoded secrets, DEBUG=True, insecure cookie flags, CSRF disabled
