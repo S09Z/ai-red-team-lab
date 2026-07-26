@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Search{% endblock %}
+{% block content %}
+<h1>Search Posts</h1>
+<form>
+  {# VULNERABLE: value="{{ q | safe }}" reflects attacker input into attribute. #}
+  <input name="q" value="{{ q | safe }}" placeholder="search..." size="40">
+  <button type="submit">Search</button>
+</form>
+{# VULNERABLE: q rendered raw in heading → reflected XSS. #}
+<h2>Results for: {{ q | safe }}</h2>
+{% for post in results %}
+<div style="margin:6px">
+  <a href="/post/{{ post.id }}">{{ post.title }}</a>
+</div>
+{% endfor %}
+{% if not results %}<p>No results.</p>{% endif %}
+{% endblock %}

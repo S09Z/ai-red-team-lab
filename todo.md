@@ -25,13 +25,13 @@
 - [x] `tests/test_js_harvester.py` — add tests: link-local (169.254.x.x) blocked, loopback (127.x.x.x) blocked, normal external host still allowed
 
 ## Phase 4 · Flask Target
-- [ ] `targets/flask-app/config.py` — hardcoded secrets, DEBUG=True, insecure cookie flags, CSRF disabled
-- [ ] `targets/flask-app/database.py` — SQLite seed: users (plaintext passwords), posts, secrets (fake API key)
-- [ ] `targets/flask-app/app.py` — 16 vulnerable routes (SQLi, IDOR, XSS, broken auth, open redirect, etc.)
-- [ ] `targets/flask-app/static/app.js` — hardcoded API_BASE, dev token comment, insecure localStorage
-- [ ] `targets/flask-app/templates/` — base, index, login, dashboard, profile, admin
-- [ ] `targets/flask-app/requirements.txt` — `flask`, `pyjwt`
-- [ ] `targets/flask-app/Dockerfile`
+- [x] `targets/flask-app/config.py` — hardcoded secrets, DEBUG=True, insecure cookie flags, CSRF disabled
+- [x] `targets/flask-app/database.py` — SQLite seed: users (plaintext passwords), posts, secrets (fake API key)
+- [x] `targets/flask-app/app.py` — 16 vulnerable routes (SQLi, IDOR, XSS, broken auth, open redirect, etc.)
+- [x] `targets/flask-app/static/app.js` — hardcoded API_BASE, dev token comment, insecure localStorage
+- [x] `targets/flask-app/templates/` — base, index, login, dashboard, profile, admin, post, search
+- [x] `targets/flask-app/requirements.txt` — `flask`, `pyjwt`
+- [x] `targets/flask-app/Dockerfile`
 
 ## Phase 5 · Docker Compose
 - [ ] `docker-compose.yml` — flask-app service, port 5000, isolated bridge network, healthcheck

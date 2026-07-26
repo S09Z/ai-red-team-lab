@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Admin Panel{% endblock %}
+{% block content %}
+<h1>Admin Panel</h1>
+<table border="1" cellpadding="4">
+  <tr>
+    <th>ID</th><th>Username</th><th>Password (plaintext)</th>
+    <th>Email</th><th>Admin</th><th>Reset Password</th>
+  </tr>
+  {% for user in users %}
+  <tr>
+    <td>{{ user.id }}</td>
+    <td>{{ user.username }}</td>
+    <td>{{ user.password }}</td>
+    <td>{{ user.email }}</td>
+    <td>{{ user.is_admin }}</td>
+    <td>
+      {# VULNERABLE: no CSRF token on this state-changing form. #}
+      <form method="post" action="/admin/reset-password">
+        <input type="hidden" name="user_id" value="{{ user.id }}">
+        <input name="new_password" placeholder="new password" size="12">
+        <button type="submit">Reset</button>
+      </form>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}

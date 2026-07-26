@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Home — Red Team Lab{% endblock %}
+{% block content %}
+<h1>Red Team Lab — Vulnerable Flask Target</h1>
+<p>A deliberately insecure application for authorized defensive training only.</p>
+<h2>Entry Points</h2>
+<ul>
+  <li><a href="/login">Login</a> (try: admin/admin123)</li>
+  <li><a href="/search?q=">Search posts</a></li>
+  <li><a href="/api/users">GET /api/users</a> — unauthenticated user list</li>
+  <li><a href="/debug">GET /debug</a> — server config dump</li>
+  <li><a href="/redirect?next=http://example.com">GET /redirect?next=...</a> — open redirect</li>
+</ul>
+{% endblock %}
