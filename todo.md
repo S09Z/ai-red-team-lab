@@ -42,12 +42,12 @@
 - [x] `templates/role-checklist.md` — self-verification checklist (CLAUDE.md §10)
 
 ## Phase 7 · CLI Tools
-- [ ] `tools/README.md`
-- [ ] `tools/run_http.py`
-- [ ] `tools/run_ports.py`
-- [ ] `tools/run_js.py`
-- [ ] `tools/run_headers.py`
-- [ ] `tools/run_config.py`
+- [x] `tools/README.md`
+- [x] `tools/run_http.py`
+- [x] `tools/run_ports.py`
+- [x] `tools/run_js.py`
+- [x] `tools/run_headers.py`
+- [x] `tools/run_config.py`
 
 ## Phase 8 · Docs
 - [ ] `docs/setup.md` — prereqs, install, first run
