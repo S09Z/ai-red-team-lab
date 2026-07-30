@@ -50,10 +50,10 @@
 - [x] `tools/run_config.py`
 
 ## Phase 8 · Docs
-- [ ] `docs/setup.md` — prereqs, install, first run
-- [ ] `docs/workflow.md` — full assessment session walkthrough
-- [ ] `docs/roles.md` — role → trigger phrase → tools → output → restrictions
-- [ ] `docs/lab-scenario-01.md` — scope, role order, success criteria, spoiler-hidden findings
+- [x] `docs/setup.md` — prereqs, install, first run
+- [x] `docs/workflow.md` — full assessment session walkthrough
+- [x] `docs/roles.md` — role → trigger phrase → tools → output → restrictions
+- [x] `docs/lab-scenario-01.md` — scope, role order, success criteria, spoiler-hidden findings
 
 ## Phase 9 · README
 - [ ] `README.md` — quick-start, what the lab is, links to docs
