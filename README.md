@@ -16,6 +16,11 @@ modifying** the target.
 
 - **A vulnerable target** — a Flask blog app (`targets/flask-app/`) with 8
   vulnerability classes across 16 routes, run in an isolated container.
+- **A hardened reference deployment** — the *same* app
+  (`targets/flask-app-secure/`) with every flaw class closed, fronted by nginx
+  (TLS, edge headers, rate limiting; app on an internal-only network). Run the
+  same tools against it to see the difference — see
+  [`docs/hardening.md`](docs/hardening.md).
 - **A read-only observation library** (`src/ai_red_team_lab/`) — HTTP
   observation, TCP connect scanning, JavaScript harvesting, security-header
   auditing, and static config scanning. Nothing exploits or writes.
@@ -46,6 +51,16 @@ python tools/run_config.py  --file targets/flask-app/config.py
 docker compose down
 ```
 
+To run the **hardened** counterpart (app internal-only, nginx at the edge) and
+measure the contrast:
+
+```bash
+docker compose -f docker-compose.secure.yml up -d --build
+python tools/run_headers.py --url http://localhost:8080/   # 9/9 (was 0/9)
+curl -k https://localhost:8443/                            # 200 over TLS
+docker compose -f docker-compose.secure.yml down
+```
+
 Full instructions and troubleshooting are in [docs/setup.md](docs/setup.md).
 
 ## Documentation
@@ -56,20 +71,24 @@ Full instructions and troubleshooting are in [docs/setup.md](docs/setup.md).
 | [docs/workflow.md](docs/workflow.md) | A full assessment session mapped to the Observe→Report loop |
 | [docs/roles.md](docs/roles.md) | Each red-team role: trigger, tools, output, boundaries |
 | [docs/lab-scenario-01.md](docs/lab-scenario-01.md) | Guided first assessment with success criteria (answer key hidden) |
+| [docs/hardening.md](docs/hardening.md) | Vulnerable→hardened controls mapped to OWASP, with the tool/test that verifies each |
 | [tools/README.md](tools/README.md) | The CLI observation tools and their flags |
 | [CLAUDE.md](CLAUDE.md) | The governance model — safety constraints, roles, evidence rules |
 
 ## Repository layout
 
 ```
-src/ai_red_team_lab/   read-only observation library
-tools/                 CLI runners over the library
-templates/             finding card, full report, self-check
-targets/flask-app/     deliberately vulnerable target
-docs/                  setup, workflow, roles, scenario
-tests/                 pytest suite for the library
-docker-compose.yml     runs the target on an isolated network
-CLAUDE.md              governance / operating rules
+src/ai_red_team_lab/       read-only observation library
+tools/                     CLI runners over the library
+templates/                 finding card, full report, self-check
+targets/flask-app/         deliberately vulnerable target
+targets/flask-app-secure/  hardened reference (same app, flaws closed)
+deploy/nginx/              edge reverse proxy: TLS, headers, rate limiting
+docs/                      setup, workflow, roles, scenario, hardening
+tests/                     pytest suite for the library + secure app
+docker-compose.yml         runs the vulnerable target on an isolated network
+docker-compose.secure.yml  runs the hardened app behind nginx
+CLAUDE.md                  governance / operating rules
 ```
 
 ## Development
