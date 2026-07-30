@@ -1,0 +1,48 @@
+# Portal control-plane stack: FastAPI API (internal) behind the SPA's nginx.
+#
+# portal-web is the only host-published service; it serves the built React app
+# and reverse-proxies API paths to portal-api on the internal network.
+#
+#   run:  docker compose -f docker-compose.portal.yml up -d --build
+#   open: http://localhost:8090/  -> "Dev login (stub)"
+#   test: curl -X POST http://localhost:8090/auth/stub  (sets session cookie)
+#         python tools/run_headers.py --url http://localhost:8090/health  -> 9/9
+services:
+  portal-api:
+    build: ./portal-api
+    # Internal only. Stub login on; cookies non-Secure for plain-HTTP local use.
+    expose:
+      - "8000"
+    environment:
+      - AUTH_STUB=1
+      - COOKIE_SECURE=false
+      - FRONTEND_ORIGIN=http://localhost:8090
+      - DATABASE_URL=sqlite+aiosqlite:///./portal.db
+    networks:
+      - portal-net
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+  portal-web:
+    build: ./portal-web
+    ports:
+      - "8090:80"
+    depends_on:
+      portal-api:
+        condition: service_healthy
+    networks:
+      - portal-net
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "-", "http://127.0.0.1/"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+networks:
+  portal-net:
+    driver: bridge
