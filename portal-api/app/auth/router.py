@@ -12,18 +12,25 @@ from __future__ import annotations
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import JSONResponse, RedirectResponse
+from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..db import get_session
 from ..deps import get_current_user
 from ..models import User
+from ..rbac import effective_permissions, permissions_payload, role_keys_for_user
 from ..security import clear_session, issue_session
-from .stub import get_or_create_stub_user
+from .stub import STUB_EMAIL, get_or_create_stub_user
 
 router = APIRouter()
 
 _PROVIDERS = {"github", "google"}
+
+
+class StubLogin(BaseModel):
+    email: str | None = None
+    role: str | None = None
 
 
 def _issue(request: Request, response, user_id: int) -> None:
@@ -36,10 +43,16 @@ def _issue(request: Request, response, user_id: int) -> None:
 
 
 @router.post("/auth/stub")
-async def auth_stub(request: Request, session: AsyncSession = Depends(get_session)):
+async def auth_stub(
+    request: Request,
+    body: StubLogin | None = None,
+    session: AsyncSession = Depends(get_session),
+):
     if not request.app.state.settings.auth_stub:
         raise HTTPException(status_code=404, detail="stub login disabled")
-    user = await get_or_create_stub_user(session)
+    email = body.email if body and body.email else STUB_EMAIL
+    role = body.role if body and body.role else "admin"
+    user = await get_or_create_stub_user(session, email=email, role=role)
     response = JSONResponse(user.public_dict())
     _issue(request, response, user.id)
     return response
@@ -87,10 +100,19 @@ async def logout():
 
 
 @router.get("/me")
-async def me(user: User | None = Depends(get_current_user)):
+async def me(
+    user: User | None = Depends(get_current_user),
+    session: AsyncSession = Depends(get_session),
+):
     if user is None:
         raise HTTPException(status_code=401, detail="not authenticated")
-    return user.public_dict()
+    perms = await effective_permissions(session, user.id)
+    roles = await role_keys_for_user(session, user.id)
+    return {
+        **user.public_dict(),
+        "roles": roles,
+        "permissions": permissions_payload(perms),
+    }
 
 
 async def _fetch_profile(provider: str, client, token: dict) -> dict:
