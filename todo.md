@@ -56,7 +56,7 @@
 - [x] `docs/lab-scenario-01.md` — scope, role order, success criteria, spoiler-hidden findings
 
 ## Phase 9 · README
-- [ ] `README.md` — quick-start, what the lab is, links to docs
+- [x] `README.md` — quick-start, what the lab is, links to docs
 
 ---
 
