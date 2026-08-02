@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Profile — {{ user.username }}{% endblock %}
+{% block content %}
+<h1>{{ user.username }}</h1>
+<h2>Bio</h2>
+{# FIX: bio autoescaped (no ``| safe``) — stored HTML is rendered as text. #}
+<div class="bio">{{ user.bio }}</div>
+{% if owner %}
+<hr>
+<h2>Update Bio</h2>
+{# FIX: server enforces ownership; CSRF token required. #}
+<form method="post" action="/profile/{{ user.id }}/update">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <textarea name="bio" rows="4" cols="50">{{ user.bio }}</textarea><br><br>
+  <button type="submit">Update</button>
+</form>
+{% endif %}
+{% endblock %}

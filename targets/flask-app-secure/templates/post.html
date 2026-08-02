@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}{{ post.title }}{% endblock %}
+{% block content %}
+<h1>{{ post.title }}</h1>
+{# FIX: content autoescaped (no ``| safe``) — stored HTML renders as inert text. #}
+<div class="content">{{ post.content }}</div>
+<br>
+<a href="/dashboard">← Back</a>
+{% endblock %}
