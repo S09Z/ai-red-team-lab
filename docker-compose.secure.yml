@@ -1,0 +1,46 @@
+# Hardened reference deployment: gunicorn app behind an nginx reverse proxy.
+#
+# The app is reachable only on the internal `secure-net` (expose, not ports);
+# nginx is the sole host-published service. Contrast with docker-compose.yml,
+# which publishes the vulnerable dev server directly.
+#
+#   run:  docker compose -f docker-compose.secure.yml up -d --build
+#   test: run_headers --url http://localhost:8080/   -> 9/9
+#         curl -k https://localhost:8443/            -> 200
+services:
+  secure-app:
+    build: ./targets/flask-app-secure
+    # Internal only -- no host port. SECRET_KEY / JWT_SECRET are self-generated
+    # ephemerally when unset (see app.py); set them in the environment for
+    # sessions that survive a restart.
+    expose:
+      - "5000"
+    networks:
+      - secure-net
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5000/')"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+  nginx:
+    build: ./deploy/nginx
+    ports:
+      - "8080:80"
+      - "8443:443"
+    depends_on:
+      secure-app:
+        condition: service_healthy
+    networks:
+      - secure-net
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "-", "http://127.0.0.1/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+networks:
+  secure-net:
+    driver: bridge
