@@ -27,6 +27,11 @@ ruff = ">=0.9"
 [tool.ruff]
 line-length = 100
 target-version = "py311"
+# The deliberately-vulnerable target is an observation artifact, not maintained
+# code (it is the "before" half of the contrast and stays unchanged), so it is
+# excluded from lint. `ruff check .` then reflects only the code we own — and
+# means the same thing locally and in CI. The hardened target is still linted.
+extend-exclude = ["targets/flask-app"]
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I"]
