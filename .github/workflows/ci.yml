@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          # Concrete deps only. The observation library imports requests + bs4;
+          # the hardened target ships its own requirements (needed because the
+          # secure-app tests drive create_app()). `headroom` is declared in
+          # pyproject but never imported, so it is intentionally skipped.
+          pip install ruff pytest responses requests beautifulsoup4
+          pip install -r targets/flask-app-secure/requirements.txt
+
+      - name: Lint
+        run: ruff check .
+
+      - name: Test
+        run: pytest -ra
