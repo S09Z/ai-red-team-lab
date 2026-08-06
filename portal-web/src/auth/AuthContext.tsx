@@ -8,6 +8,8 @@ export interface User {
   provider: string;
   name: string;
   avatar: string;
+  roles: string[];
+  permissions: Record<string, string[]>;
 }
 
 interface AuthState {
@@ -15,6 +17,7 @@ interface AuthState {
   loading: boolean;
   refresh: () => Promise<void>;
   logout: () => Promise<void>;
+  can: (feature: string, action: string) => boolean;
 }
 
 const AuthContext = createContext<AuthState | undefined>(undefined);
@@ -34,12 +37,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
   }
 
+  function can(feature: string, action: string): boolean {
+    return user?.permissions?.[feature]?.includes(action) ?? false;
+  }
+
   useEffect(() => {
     void refresh();
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, loading, refresh, logout }}>
+    <AuthContext.Provider value={{ user, loading, refresh, logout, can }}>
       {children}
     </AuthContext.Provider>
   );

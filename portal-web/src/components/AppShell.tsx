@@ -1,19 +1,29 @@
 import { type ReactNode } from "react";
+import { Link } from "react-router-dom";
 
 import { useAuth } from "../auth/AuthContext";
 
-const NAV = ["Lessons", "Tools", "Docs", "Reports"];
+// Nav item -> the feature whose read permission reveals it.
+const NAV: { label: string; feature: string; to?: string }[] = [
+  { label: "Lessons", feature: "lessons" },
+  { label: "Tools", feature: "tools" },
+  { label: "Docs", feature: "docs" },
+  { label: "Reports", feature: "reports" },
+  { label: "Admin", feature: "users", to: "/admin" },
+];
 
 export default function AppShell({ children }: { children: ReactNode }) {
-  const { user, logout } = useAuth();
+  const { user, logout, can } = useAuth();
   return (
     <div>
       <header>
-        <strong>Red Team Lab Portal</strong>
+        <strong>
+          <Link to="/">Red Team Lab Portal</Link>
+        </strong>
         <nav>
-          {NAV.map((item) => (
-            <span key={item} style={{ marginLeft: 12, opacity: 0.6 }}>
-              {item}
+          {NAV.filter((item) => can(item.feature, "read")).map((item) => (
+            <span key={item.label} style={{ marginLeft: 12 }}>
+              {item.to ? <Link to={item.to}>{item.label}</Link> : item.label}
             </span>
           ))}
         </nav>

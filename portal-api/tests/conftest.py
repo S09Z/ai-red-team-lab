@@ -41,3 +41,27 @@ def make_app(tmp_path):
 def client(make_app):
     with TestClient(make_app()) as c:
         yield c
+
+
+@pytest.fixture
+def clients(make_app):
+    """Factory of TestClients sharing ONE app/DB, for multi-user RBAC tests.
+
+    Each client has its own cookie jar, so different clients can hold sessions
+    for different users (e.g. an admin and a viewer) against the same database.
+    """
+    app = make_app(name="rbac")
+    opened = []
+
+    def _make():
+        c = TestClient(app)
+        c.__enter__()
+        opened.append(c)
+        return c
+
+    yield _make
+    for c in opened:
+        try:
+            c.__exit__(None, None, None)
+        except Exception:
+            pass
