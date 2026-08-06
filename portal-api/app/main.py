@@ -14,9 +14,11 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 
+from .admin import router as admin_router
 from .auth.oauth import build_oauth
 from .auth.router import router as auth_router
 from .db import Base, make_engine, make_sessionmaker
+from .rbac import seed_rbac
 from .security import SecurityHeadersMiddleware, make_serializer
 from .settings import Settings
 
@@ -26,11 +28,14 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     secret_key = settings.portal_secret_key or secrets.token_hex(32)
 
     engine = make_engine(settings.database_url)
+    sessionmaker = make_sessionmaker(engine)
 
     @asynccontextmanager
     async def lifespan(app: FastAPI):
         async with engine.begin() as conn:
             await conn.run_sync(Base.metadata.create_all)
+        async with sessionmaker() as session:
+            await seed_rbac(session)
         yield
         await engine.dispose()
 
@@ -38,7 +43,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     app.state.settings = settings
     app.state.engine = engine
-    app.state.sessionmaker = make_sessionmaker(engine)
+    app.state.sessionmaker = sessionmaker
     app.state.serializer = make_serializer(secret_key)
     app.state.oauth = build_oauth(settings)
 
@@ -55,6 +60,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.add_middleware(SecurityHeadersMiddleware)
 
     app.include_router(auth_router)
+    app.include_router(admin_router)
 
     @app.get("/health")
     async def health():
