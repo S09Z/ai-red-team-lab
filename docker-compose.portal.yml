@@ -18,6 +18,13 @@ services:
       - COOKIE_SECURE=false
       - FRONTEND_ORIGIN=http://localhost:8090
       - DATABASE_URL=sqlite+aiosqlite:///./portal.db
+      # Fixed lab targets for the lessons' safe "try it" observations. These are
+      # host-published (run docker-compose.yml / docker-compose.secure.yml);
+      # host.docker.internal reaches them from inside the container.
+      - VULN_TARGET_URL=http://host.docker.internal:5000
+      - SECURE_TARGET_URL=http://host.docker.internal:8080
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     networks:
       - portal-net
     healthcheck:

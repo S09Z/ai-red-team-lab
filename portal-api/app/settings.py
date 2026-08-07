@@ -38,6 +38,12 @@ class Settings(BaseSettings):
     # False for plain-HTTP local/CI so the test client round-trips the cookie.
     cookie_secure: bool = True
 
+    # Fixed lab target URLs for the lessons' safe "try it" observations. These
+    # are the ONLY hosts a probe may contact (no user-supplied URLs), so there
+    # is no SSRF surface. Point them at the running lab targets.
+    vuln_target_url: str = "http://localhost:5000"
+    secure_target_url: str = "http://localhost:8080"
+
     @property
     def github_configured(self) -> bool:
         return bool(self.github_client_id and self.github_client_secret)

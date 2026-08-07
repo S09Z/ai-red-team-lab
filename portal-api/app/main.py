@@ -18,6 +18,7 @@ from .admin import router as admin_router
 from .auth.oauth import build_oauth
 from .auth.router import router as auth_router
 from .db import Base, make_engine, make_sessionmaker
+from .lessons import router as lessons_router
 from .rbac import seed_rbac
 from .security import SecurityHeadersMiddleware, make_serializer
 from .settings import Settings
@@ -61,6 +62,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     app.include_router(auth_router)
     app.include_router(admin_router)
+    app.include_router(lessons_router)
 
     @app.get("/health")
     async def health():

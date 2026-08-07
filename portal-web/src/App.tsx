@@ -4,6 +4,8 @@ import AppShell from "./components/AppShell";
 import { useAuth } from "./auth/AuthContext";
 import Admin from "./pages/Admin";
 import Dashboard from "./pages/Dashboard";
+import LessonRunner from "./pages/LessonRunner";
+import Lessons from "./pages/Lessons";
 import Login from "./pages/Login";
 
 export default function App() {
@@ -19,6 +21,22 @@ export default function App() {
             element={
               <AppShell>
                 <Admin />
+              </AppShell>
+            }
+          />
+          <Route
+            path="/lessons"
+            element={
+              <AppShell>
+                <Lessons />
+              </AppShell>
+            }
+          />
+          <Route
+            path="/lessons/:key"
+            element={
+              <AppShell>
+                <LessonRunner />
               </AppShell>
             }
           />
