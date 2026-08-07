@@ -5,7 +5,7 @@ import { useAuth } from "../auth/AuthContext";
 
 // Nav item -> the feature whose read permission reveals it.
 const NAV: { label: string; feature: string; to?: string }[] = [
-  { label: "Lessons", feature: "lessons" },
+  { label: "Lessons", feature: "lessons", to: "/lessons" },
   { label: "Tools", feature: "tools" },
   { label: "Docs", feature: "docs" },
   { label: "Reports", feature: "reports" },
